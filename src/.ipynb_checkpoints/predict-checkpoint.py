@@ -1,0 +1,31 @@
+# Código de Scoring - Modelo de Riesgo de Default en un Banco de Corea
+############################################################################
+
+import pandas as pd
+import pickle
+import os
+
+
+# Cargar la tabla transformada
+def score_model(x_test, scores):
+    x_test = pd.read_csv(os.path.join('../data/processed', x_test))
+    print('x_test cargado correctamente')
+    # Leemos el modelo entrenado para usarlo
+    package = '../models/best_model.pkl'
+    model = pickle.load(open(package, 'rb'))
+    print('Modelo importado correctamente')
+    # Predecimos sobre el set de datos de Scoring    
+    res = model.predict(x_test).reshape(-1,1)
+    pred = pd.DataFrame(res, columns=['PREDICT'])
+    pred.to_csv(os.path.join('../data/scores/', scores), index = False)
+    print(scores, 'exportado correctamente en la carpeta scores')
+
+
+# Scoring desde el inicio
+def main():
+    df = score_model('drug_x_test.csv','final_score.csv')
+    print('Finalizó el Scoring del Modelo')
+
+
+if __name__ == "__main__":
+    main()
